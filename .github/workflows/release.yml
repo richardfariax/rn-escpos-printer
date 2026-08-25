@@ -1,23 +1,31 @@
-name: Publish to npm
+name: Publish release
 
 on:
-  workflow_dispatch:
+  push:
+    tags:
+      - 'v*.*.*'
+
+concurrency:
+  group: npm-release-${{ github.ref }}
+  cancel-in-progress: false
 
 permissions:
-  contents: read
+  contents: write
   id-token: write
 
 jobs:
   publish:
-    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     environment: npm
 
     steps:
-      - name: Checkout
+      - name: Checkout release
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          fetch-depth: 0
 
-      - name: Setup
+      - name: Setup project
         uses: ./.github/actions/setup
 
       - name: Configure npm registry
@@ -26,8 +34,46 @@ jobs:
           node-version-file: .nvmrc
           registry-url: https://registry.npmjs.org
 
+      - name: Install trusted-publishing compatible npm
+        run: npm install --global 'npm@^11.5.1'
+
+      - name: Validate release metadata
+        id: release
+        run: yarn release:check "$GITHUB_REF_NAME"
+
+      - name: Require release commit on main
+        run: |
+          git fetch origin main --no-tags
+          git merge-base --is-ancestor "$GITHUB_SHA" origin/main
+
       - name: Verify package
         run: yarn verify
 
-      - name: Publish with provenance
+      - name: Check npm registry
+        id: registry
+        env:
+          PACKAGE_NAME: ${{ steps.release.outputs.package_name }}
+          PACKAGE_VERSION: ${{ steps.release.outputs.package_version }}
+        run: |
+          if npm view "$PACKAGE_NAME@$PACKAGE_VERSION" version > /dev/null 2>&1; then
+            echo "already_published=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "already_published=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Publish package with provenance
+        if: steps.registry.outputs.already_published != 'true'
         run: npm publish --provenance --access public
+
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PACKAGE_NAME: ${{ steps.release.outputs.package_name }}
+          PACKAGE_VERSION: ${{ steps.release.outputs.package_version }}
+        run: |
+          if ! gh release view "$GITHUB_REF_NAME" > /dev/null 2>&1; then
+            gh release create "$GITHUB_REF_NAME" \
+              --verify-tag \
+              --generate-notes \
+              --title "$PACKAGE_NAME $PACKAGE_VERSION"
+          fi

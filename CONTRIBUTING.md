@@ -102,10 +102,13 @@ The `package.json` file contains various scripts for common tasks:
 - `yarn typecheck`: type-check files with TypeScript.
 - `yarn lint`: lint files with [ESLint](https://eslint.org/).
 - `yarn test`: run the JavaScript unit tests.
+- `yarn release:check`: validate the package version, release tag, and changelog entry.
 - `yarn verify`: run every publish-time validation and inspect the npm package.
 - `yarn example start`: start the Metro server for the example app.
 - `yarn example android`: run the example app on Android.
 - `yarn example ios`: run the example app on iOS.
+
+Maintainers must follow [RELEASING.md](./RELEASING.md) for every npm release.
 
 ### Sending a pull request
 

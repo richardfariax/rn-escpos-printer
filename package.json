@@ -101,6 +101,9 @@
   "workspaces": [
     "example"
   ],
+  "resolutions": {
+    "fast-xml-parser": "5.7.0"
+  },
   "packageManager": "yarn@4.11.0",
   "react-native-builder-bob": {
     "source": "src",

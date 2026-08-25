@@ -18,15 +18,37 @@ updates:
         update-types:
           - minor
           - patch
+    ignore:
+      - dependency-name: '*'
+        update-types:
+          - version-update:semver-major
 
   - package-ecosystem: bundler
     directory: /example
     schedule:
       interval: monthly
     open-pull-requests-limit: 3
+    groups:
+      ruby-toolchain:
+        update-types:
+          - minor
+          - patch
+    ignore:
+      - dependency-name: '*'
+        update-types:
+          - version-update:semver-major
 
   - package-ecosystem: gradle
     directory: /example/android
     schedule:
       interval: monthly
     open-pull-requests-limit: 3
+    groups:
+      android-toolchain:
+        update-types:
+          - minor
+          - patch
+    ignore:
+      - dependency-name: '*'
+        update-types:
+          - version-update:semver-major

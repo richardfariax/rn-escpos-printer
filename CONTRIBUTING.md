@@ -13,6 +13,8 @@ This project is a monorepo managed using [Yarn workspaces](https://yarnpkg.com/f
 
 To get started with the project, make sure you have the correct version of [Node.js](https://nodejs.org/) installed. See the [`.nvmrc`](./.nvmrc) file for the version used in this project.
 
+The iOS example uses Ruby 3.3 with the gem versions pinned in `example/Gemfile`. Ruby 3.4 is intentionally unsupported by this React Native 0.76 CocoaPods toolchain.
+
 Run `yarn` in the root directory to install the required dependencies for each package:
 
 ```sh
@@ -100,6 +102,7 @@ The `package.json` file contains various scripts for common tasks:
 
 - `yarn`: setup project by installing dependencies.
 - `yarn typecheck`: type-check files with TypeScript.
+- `yarn format:check`: verify formatting without modifying files.
 - `yarn lint`: lint files with [ESLint](https://eslint.org/).
 - `yarn test`: run the JavaScript unit tests.
 - `yarn release:check`: validate the package version, release tag, and changelog entry.

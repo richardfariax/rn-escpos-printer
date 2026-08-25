@@ -38,11 +38,12 @@
     "prepare": "bob build",
     "prepublishOnly": "yarn verify",
     "typecheck": "tsc --noEmit",
+    "format:check": "prettier --check . --ignore-unknown",
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
     "test": "jest",
     "test:coverage": "jest --coverage",
     "release:check": "node ./scripts/verify-release.mjs",
-    "verify": "yarn lint && yarn typecheck && yarn test && yarn prepare && npm pack --dry-run"
+    "verify": "yarn format:check && yarn lint && yarn typecheck && yarn test && yarn prepare && npm pack --dry-run"
   },
   "keywords": [
     "react-native",

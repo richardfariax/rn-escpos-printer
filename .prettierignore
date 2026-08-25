@@ -1,0 +1,8 @@
+.yarn/
+**/build/
+coverage/
+example/ios/Pods/
+example/vendor/
+lib/
+node_modules/
+*.lock

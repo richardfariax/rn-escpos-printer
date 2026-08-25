@@ -19,6 +19,12 @@ updates:
           - minor
           - patch
     ignore:
+      - dependency-name: react-native
+        update-types:
+          - version-update:semver-minor
+      - dependency-name: '@react-native/*'
+        update-types:
+          - version-update:semver-minor
       - dependency-name: '*'
         update-types:
           - version-update:semver-major

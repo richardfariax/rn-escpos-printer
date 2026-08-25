@@ -147,13 +147,21 @@ Returns whether a usable native printer transport is active.
 
 ### `printText(text, options?): Promise<void>`
 
-| Option      | Type                       | Default   |
-| ----------- | -------------------------- | --------- |
-| `codePage`  | `'cp850' \| 'windows1252'` | `'cp850'` |
-| `feedLines` | integer from 0 to 10       | `5`       |
-| `cut`       | `boolean`                  | `true`    |
+| Option      | Type                                  | Default   |
+| ----------- | ------------------------------------- | --------- |
+| `codePage`  | `'cp850' \| 'cp860' \| 'windows1252'` | `'cp850'` |
+| `feedLines` | integer from 0 to 10                  | `5`       |
+| `cut`       | `boolean`                             | `true`    |
 
-The printer's configured character table must match the selected code page. CP850 is the recommended default for Portuguese receipts.
+The printer's configured character table must match the selected code page. CP850 remains the backward-compatible default. For Portuguese receipts, use CP860 when the printer supports the standard ESC/POS page 3 mapping:
+
+```ts
+await EscPosPrinter.printText('Não autorizado: ação e preço', {
+  codePage: 'cp860',
+});
+```
+
+Character-table support and page numbers can vary on non-Epson-compatible firmware, so validate the selected code page on every printer model used in production.
 
 ### `printImageBase64(base64, options?): Promise<void>`
 

@@ -20,6 +20,9 @@ static const uint8_t RNGs = 0x1D;
   if ([codePage isEqualToString:@"cp850"]) {
     cfEncoding = kCFStringEncodingDOSLatin1;
     codeTable = 2;
+  } else if ([codePage isEqualToString:@"cp860"]) {
+    cfEncoding = kCFStringEncodingDOSPortuguese;
+    codeTable = 3;
   } else if ([codePage isEqualToString:@"windows1252"]) {
     cfEncoding = kCFStringEncodingWindowsLatin1;
     codeTable = 16;

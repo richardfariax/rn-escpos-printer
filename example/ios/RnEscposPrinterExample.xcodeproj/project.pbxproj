@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		00E356F31AD99517003FC87E /* RnEscposPrinterExampleTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* RnEscposPrinterExampleTests.m */; };
 		0A9300022C8D49A000000002 /* RNEscPosImageEncoderTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A9300012C8D49A000000001 /* RNEscPosImageEncoderTests.m */; };
+		0A9300042C8D49A000000004 /* RNEscPosCommandsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A9300032C8D49A000000003 /* RNEscPosCommandsTests.m */; };
 		0C80B921A6F3F58F76C31292 /* libPods-RnEscposPrinterExample.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCACB8F33CDC322A6C60F78 /* libPods-RnEscposPrinterExample.a */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
@@ -33,6 +34,7 @@
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* RnEscposPrinterExampleTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RnEscposPrinterExampleTests.m; sourceTree = "<group>"; };
 		0A9300012C8D49A000000001 /* RNEscPosImageEncoderTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RNEscPosImageEncoderTests.m; sourceTree = "<group>"; };
+		0A9300032C8D49A000000003 /* RNEscPosCommandsTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RNEscPosCommandsTests.m; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* RnEscposPrinterExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RnEscposPrinterExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = RnEscposPrinterExample/AppDelegate.h; sourceTree = "<group>"; };
 		13B07FB01A68108700A75B9A /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AppDelegate.mm; path = RnEscposPrinterExample/AppDelegate.mm; sourceTree = "<group>"; };
@@ -73,6 +75,7 @@
 		00E356EF1AD99517003FC87E /* RnEscposPrinterExampleTests */ = {
 			isa = PBXGroup;
 			children = (
+				0A9300032C8D49A000000003 /* RNEscPosCommandsTests.m */,
 				0A9300012C8D49A000000001 /* RNEscPosImageEncoderTests.m */,
 				00E356F21AD99517003FC87E /* RnEscposPrinterExampleTests.m */,
 				00E356F01AD99517003FC87E /* Supporting Files */,
@@ -391,6 +394,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0A9300042C8D49A000000004 /* RNEscPosCommandsTests.m in Sources */,
 				0A9300022C8D49A000000002 /* RNEscPosImageEncoderTests.m in Sources */,
 				00E356F31AD99517003FC87E /* RnEscposPrinterExampleTests.m in Sources */,
 			);

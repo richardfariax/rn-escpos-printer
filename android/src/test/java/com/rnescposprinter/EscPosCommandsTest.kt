@@ -18,6 +18,27 @@ class EscPosCommandsTest {
   }
 
   @Test
+  fun `Portuguese text uses CP860 golden bytes`() {
+    val bytes = EscPosCommands.text(
+      "Não|RAZÃO|ORÇAMENTO|ação|café|preço",
+      "cp860",
+      feedLines = 0,
+      cut = false
+    )
+    val expected = byteArrayOf(
+      0x1B, '@'.code.toByte(), 0x1B, 't'.code.toByte(), 3,
+      0x4E, 0x84.toByte(), 0x6F, 0x7C,
+      0x52, 0x41, 0x5A, 0x8E.toByte(), 0x4F, 0x7C,
+      0x4F, 0x52, 0x80.toByte(), 0x41, 0x4D, 0x45, 0x4E, 0x54, 0x4F, 0x7C,
+      0x61, 0x87.toByte(), 0x84.toByte(), 0x6F, 0x7C,
+      0x63, 0x61, 0x66, 0x82.toByte(), 0x7C,
+      0x70, 0x72, 0x65, 0x87.toByte(), 0x6F
+    )
+
+    assertArrayEquals(expected, bytes)
+  }
+
+  @Test
   fun `bit image header encodes width in little endian`() {
     assertArrayEquals(
       byteArrayOf(0x1B, '*'.code.toByte(), 33, 0x40, 0x02),

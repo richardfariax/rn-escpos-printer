@@ -1,6 +1,6 @@
 export type PaperWidth = 58 | 80;
 
-export type TextCodePage = 'cp850' | 'windows1252';
+export type TextCodePage = 'cp850' | 'cp860' | 'windows1252';
 
 export type PrinterTransport = 'bluetooth-classic' | 'ble';
 

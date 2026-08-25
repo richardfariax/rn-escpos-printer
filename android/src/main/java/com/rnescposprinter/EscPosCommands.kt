@@ -10,6 +10,7 @@ internal object EscPosCommands {
   fun text(text: String, codePage: String, feedLines: Int, cut: Boolean): ByteArray {
     val (codeTable, charset) = when (codePage) {
       "cp850" -> 2 to Charset.forName("IBM850")
+      "cp860" -> 3 to Charset.forName("IBM860")
       "windows1252" -> 16 to Charset.forName("windows-1252")
       else -> throw EscPosException(
         EscPosErrorCode.INVALID_ARGUMENT,

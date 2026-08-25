@@ -69,7 +69,7 @@ export default function App() {
     run(async () => {
       await EscPosPrinter.printText(
         'rn-escpos-printer\nPedido: 123\nAcentos: ação, café, preço\nTotal: R$ 42,90',
-        { codePage: 'cp850' }
+        { codePage: 'cp860' }
       );
       setStatus('Test receipt sent');
     });

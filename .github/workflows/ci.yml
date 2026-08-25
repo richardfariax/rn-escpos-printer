@@ -148,7 +148,7 @@ jobs:
             CODE_SIGNING_ALLOWED=NO \
             build
 
-      - name: Test iOS image encoder
+      - name: Test iOS ESC/POS encoders
         run: |
           simulator_id="$(
             xcrun simctl list devices available --json | ruby -rjson -e '
@@ -163,6 +163,7 @@ jobs:
             -configuration Debug \
             -sdk iphonesimulator \
             -destination "platform=iOS Simulator,id=${simulator_id}" \
+            -only-testing:RnEscposPrinterExampleTests/RNEscPosCommandsTests \
             -only-testing:RnEscposPrinterExampleTests/RNEscPosImageEncoderTests \
             CODE_SIGNING_ALLOWED=NO \
             test

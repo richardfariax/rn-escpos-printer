@@ -32,6 +32,21 @@ describe('EscPosPrinter', () => {
     );
   });
 
+  it('passes the Portuguese CP860 code page to the native encoder', async () => {
+    await EscPosPrinter.printText('Não', {
+      codePage: 'cp860',
+      feedLines: 0,
+      cut: false,
+    });
+
+    expect(mockNativeModule.printText).toHaveBeenCalledWith(
+      'Não',
+      'cp860',
+      0,
+      false
+    );
+  });
+
   it('uses 80 mm and proportional native image processing by default', async () => {
     await EscPosPrinter.printImageBase64('aGVsbG8=');
 

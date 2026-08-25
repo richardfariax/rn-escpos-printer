@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/richardfariax/rn-escpos-printer/actions/workflows/ci.yml/badge.svg)](https://github.com/richardfariax/rn-escpos-printer/actions/workflows/ci.yml)
 [![npm](https://img.shields.io/npm/v/rn-escpos-printer.svg)](https://www.npmjs.com/package/rn-escpos-printer)
-[![license](https://img.shields.io/npm/l/rn-escpos-printer.svg)](./LICENSE)
+[![license](https://img.shields.io/badge/license-MIT-green.svg)](./LICENSE)
 
 Reliable ESC/POS Bluetooth printing for React Native on iOS and Android. The library owns discovery, connection lifecycle, image rasterization, command generation, write serialization, and Bluetooth backpressure without a closed vendor SDK.
 

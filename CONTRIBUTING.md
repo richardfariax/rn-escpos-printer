@@ -63,6 +63,25 @@ Make sure your code passes TypeScript:
 yarn typecheck
 ```
 
+Run the JavaScript tests and the complete package verification:
+
+```sh
+yarn test
+yarn verify
+```
+
+Run the Android ESC/POS encoder tests:
+
+```sh
+cd example/android
+./gradlew :rn-escpos-printer:testDebugUnitTest
+```
+
+Changes to Bluetooth discovery, connection, chunking, text encoding, or image
+rasterization must also be tested on physical Android and iOS devices. Include
+the printer model, firmware, transport, paper width, and payload type in the pull
+request description.
+
 To check for linting errors, run the following:
 
 ```sh
@@ -75,19 +94,19 @@ To fix formatting errors, run the following:
 yarn lint --fix
 ```
 
-
-
 ### Scripts
 
 The `package.json` file contains various scripts for common tasks:
 
 - `yarn`: setup project by installing dependencies.
 - `yarn typecheck`: type-check files with TypeScript.
-  - `yarn lint`: lint files with [ESLint](https://eslint.org/).
-    - `yarn example start`: start the Metro server for the example app.
+- `yarn lint`: lint files with [ESLint](https://eslint.org/).
+- `yarn test`: run the JavaScript unit tests.
+- `yarn verify`: run every publish-time validation and inspect the npm package.
+- `yarn example start`: start the Metro server for the example app.
 - `yarn example android`: run the example app on Android.
 - `yarn example ios`: run the example app on iOS.
-  
+
 ### Sending a pull request
 
 > **Working on your first pull request?** You can learn how from this _free_ series: [How to Contribute to an Open Source Project on GitHub](https://app.egghead.io/playlists/how-to-contribute-to-an-open-source-project-on-github).

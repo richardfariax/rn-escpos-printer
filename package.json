@@ -78,7 +78,7 @@
     "@react-native/eslint-config": "0.85.0",
     "@types/jest": "^29.5.14",
     "@types/react": "^18.2.6",
-    "babel-jest": "^29.7.0",
+    "babel-jest": "^30.4.1",
     "del-cli": "^7.0.0",
     "eslint": "8.57.0",
     "eslint-config-prettier": "^10.1.8",

@@ -38,72 +38,92 @@ internal class EscPosBluetoothTransport(private val context: Context) {
 
   @Synchronized
   fun pairedDevices(): List<EscPosPrinterDevice> {
-    val currentAddress = socket?.remoteDevice?.address
-    return adapter().bondedDevices
-      .sortedWith(compareBy({ it.name.orEmpty().lowercase() }, { it.address }))
-      .map { device ->
-        EscPosPrinterDevice(
-          id = device.address,
-          name = device.name?.takeIf(String::isNotBlank) ?: "Bluetooth printer",
-          address = device.address,
-          connected = device.address.equals(currentAddress, ignoreCase = true) &&
-            socket?.isConnected == true
-        )
-      }
+    requireConnectPermission()
+    return try {
+      val currentAddress = socket?.remoteDevice?.address
+      adapter().bondedDevices
+        .sortedWith(compareBy({ it.name.orEmpty().lowercase() }, { it.address }))
+        .map { device ->
+          EscPosPrinterDevice(
+            id = device.address,
+            name = device.name?.takeIf(String::isNotBlank) ?: "Bluetooth printer",
+            address = device.address,
+            connected = device.address.equals(currentAddress, ignoreCase = true) &&
+              socket?.isConnected == true
+          )
+        }
+    } catch (error: SecurityException) {
+      throw bluetoothPermissionError(error)
+    }
   }
 
   @Synchronized
   fun connect(identifier: String, timeoutMs: Long) {
-    val bluetoothAdapter = adapter()
-    val device = bluetoothAdapter.bondedDevices.firstOrNull {
-      it.address.equals(identifier, ignoreCase = true)
-    } ?: throw EscPosException(
-      EscPosErrorCode.PRINTER_NOT_FOUND,
-      "No paired Bluetooth device was found for $identifier"
-    )
+    requireConnectPermission()
+    try {
+      val bluetoothAdapter = adapter()
+      val device = bluetoothAdapter.bondedDevices.firstOrNull {
+        it.address.equals(identifier, ignoreCase = true)
+      } ?: throw EscPosException(
+        EscPosErrorCode.PRINTER_NOT_FOUND,
+        "No paired Bluetooth device was found for $identifier"
+      )
 
-    if (socket?.isConnected == true &&
-      socket?.remoteDevice?.address.equals(device.address, ignoreCase = true)
-    ) {
-      return
-    }
-
-    disconnect()
-    val deadlineNanos = System.nanoTime() + TimeUnit.MILLISECONDS.toNanos(timeoutMs)
-    var lastError: Throwable? = null
-
-    for (candidate in socketCandidates(device)) {
-      val remainingNanos = deadlineNanos - System.nanoTime()
-      if (remainingNanos <= 0) {
-        candidate.closeQuietly()
-        break
-      }
-
-      val connection = connectExecutor.submit { candidate.connect() }
-      try {
-        connection.get(remainingNanos, TimeUnit.NANOSECONDS)
-        socket = candidate
-        write(EscPosCommands.initialize())
+      if (socket?.isConnected == true &&
+        socket?.remoteDevice?.address.equals(device.address, ignoreCase = true)
+      ) {
         return
-      } catch (error: TimeoutException) {
-        connection.cancel(true)
-        candidate.closeQuietly()
-        throw EscPosException(
-          EscPosErrorCode.CONNECTION_TIMEOUT,
-          "Bluetooth connection timed out after $timeoutMs ms",
-          error
-        )
-      } catch (error: Exception) {
-        lastError = error.cause ?: error
-        candidate.closeQuietly()
       }
-    }
 
-    throw EscPosException(
-      EscPosErrorCode.CONNECTION_FAILED,
-      "Unable to open an ESC/POS Bluetooth connection to ${device.name ?: device.address}",
-      lastError
-    )
+      disconnect()
+      val deadlineNanos = System.nanoTime() + TimeUnit.MILLISECONDS.toNanos(timeoutMs)
+      var lastError: Throwable? = null
+
+      for (candidate in socketCandidates(device)) {
+        val remainingNanos = deadlineNanos - System.nanoTime()
+        if (remainingNanos <= 0) {
+          candidate.closeQuietly()
+          break
+        }
+
+        val connection = connectExecutor.submit {
+          try {
+            candidate.connect()
+          } catch (error: SecurityException) {
+            throw bluetoothPermissionError(error)
+          }
+        }
+        try {
+          connection.get(remainingNanos, TimeUnit.NANOSECONDS)
+          socket = candidate
+          write(EscPosCommands.initialize())
+          return
+        } catch (error: TimeoutException) {
+          connection.cancel(true)
+          candidate.closeQuietly()
+          throw EscPosException(
+            EscPosErrorCode.CONNECTION_TIMEOUT,
+            "Bluetooth connection timed out after $timeoutMs ms",
+            error
+          )
+        } catch (error: Exception) {
+          val cause = error.cause ?: error
+          if (cause is EscPosException && cause.errorCode == EscPosErrorCode.BLUETOOTH_PERMISSION) {
+            throw cause
+          }
+          lastError = cause
+          candidate.closeQuietly()
+        }
+      }
+
+      throw EscPosException(
+        EscPosErrorCode.CONNECTION_FAILED,
+        "Unable to open an ESC/POS Bluetooth connection to ${device.name ?: device.address}",
+        lastError
+      )
+    } catch (error: SecurityException) {
+      throw bluetoothPermissionError(error)
+    }
   }
 
   @Synchronized
@@ -162,14 +182,25 @@ internal class EscPosBluetoothTransport(private val context: Context) {
     }
   }
 
+  private fun bluetoothPermissionError(cause: SecurityException): EscPosException =
+    EscPosException(
+      EscPosErrorCode.BLUETOOTH_PERMISSION,
+      "BLUETOOTH_CONNECT permission is unavailable",
+      cause
+    )
+
   private fun socketCandidates(device: BluetoothDevice): List<BluetoothSocket> = buildList {
     try {
       add(device.createInsecureRfcommSocketToServiceRecord(sppUuid))
+    } catch (error: SecurityException) {
+      throw bluetoothPermissionError(error)
     } catch (_: IOException) {
       // The secure RFCOMM attempt below remains available.
     }
     try {
       add(device.createRfcommSocketToServiceRecord(sppUuid))
+    } catch (error: SecurityException) {
+      throw bluetoothPermissionError(error)
     } catch (_: IOException) {
       // Reported as a connection failure when neither socket can be created.
     }

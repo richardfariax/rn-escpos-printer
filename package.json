@@ -56,14 +56,14 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/HighsoftWeb/rn-escpos-printer.git"
+    "url": "git+https://github.com/richardfariax/rn-escpos-printer.git"
   },
-  "author": "HighSoft Sistemas <richardfariax@gmail.com> (https://github.com/HighsoftWeb)",
+  "author": "Richard Farias <richardfariax@gmail.com> (https://github.com/richardfariax)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/HighsoftWeb/rn-escpos-printer/issues"
+    "url": "https://github.com/richardfariax/rn-escpos-printer/issues"
   },
-  "homepage": "https://github.com/HighsoftWeb/rn-escpos-printer#readme",
+  "homepage": "https://github.com/richardfariax/rn-escpos-printer#readme",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },

@@ -31,6 +31,8 @@ jobs:
       - name: Typecheck files
         run: yarn typecheck
 
+      - name: Run tests
+        run: yarn test --ci
 
   build-library:
     runs-on: ubuntu-latest
@@ -44,6 +46,9 @@ jobs:
 
       - name: Build package
         run: yarn prepare
+
+      - name: Validate npm package contents
+        run: npm pack --dry-run
 
   build-android:
     runs-on: ubuntu-latest
@@ -86,7 +91,6 @@ jobs:
         run: |
           /bin/bash -c "yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses > /dev/null"
 
-
       - name: Cache Gradle
         if: env.turbo_cache_hit != 1
         uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
@@ -100,9 +104,12 @@ jobs:
 
       - name: Build example for Android
         env:
-          JAVA_OPTS: "-XX:MaxHeapSize=6g"
+          JAVA_OPTS: '-XX:MaxHeapSize=6g'
         run: |
           yarn turbo run build:android --cache-dir="${{ env.TURBO_CACHE_DIR }}"
+
+      - name: Run Android unit tests
+        run: cd example/android && ./gradlew :rn-escpos-printer:testDebugUnitTest --no-daemon
 
   build-ios:
     runs-on: macos-latest
@@ -153,4 +160,3 @@ jobs:
       - name: Build example for iOS
         run: |
           yarn turbo run build:ios --cache-dir="${{ env.TURBO_CACHE_DIR }}"
-

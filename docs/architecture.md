@@ -22,6 +22,7 @@ iOS uses CoreBluetooth without a proprietary SDK. Scanning records named periphe
 After connecting, all services and characteristics are discovered. Writable characteristics matching common printer UUIDs receive priority. A characteristic with acknowledged writes is preferred; write-without-response is supported with `canSendWriteWithoutResponse` backpressure.
 
 Images are rendered at scale 1 to exactly 384 or 576 pixels. This prevents Retina scale factors from stretching 58 mm and 80 mm output.
+UIKit normalizes image orientation before grayscale conversion, and bitmap row zero maps directly to the first 24-dot ESC/POS stripe.
 
 ## Reliability invariants
 

@@ -1,6 +1,6 @@
 {
   "name": "rn-escpos-printer",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Reliable ESC/POS Bluetooth printing for React Native on iOS and Android",
   "main": "./lib/module/index.js",
   "types": "./lib/typescript/src/index.d.ts",

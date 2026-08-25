@@ -8,6 +8,17 @@
 static const NSUInteger RNMaxBase64Length = 24000000;
 static const NSInteger RNMaxImageHeight = 30000;
 
+@interface RNEscPosImageEncoder ()
+
++ (NSData *)dataFromGrayscalePixels:(NSData *)pixels
+                               width:(NSInteger)width
+                              height:(NSInteger)height
+                           threshold:(NSInteger)threshold
+                           feedLines:(NSInteger)feedLines
+                                 cut:(BOOL)cut;
+
+@end
+
 @implementation RNEscPosImageEncoder
 
 + (NSData *)dataFromBase64:(NSString *)base64
@@ -77,6 +88,7 @@ static const NSInteger RNMaxImageHeight = 30000;
   UIImage *scaled = [renderer imageWithActions:^(UIGraphicsImageRendererContext *context) {
     [[UIColor whiteColor] setFill];
     [context fillRect:CGRectMake(0, 0, targetWidth, targetHeight)];
+    // UIKit applies image.imageOrientation here and produces normalized pixels.
     [image drawInRect:CGRectMake(0, 0, targetWidth, targetHeight)];
   }];
 
@@ -114,23 +126,39 @@ static const NSInteger RNMaxImageHeight = 30000;
 
   CGContextSetGrayFillColor(bitmapContext, 1, 1);
   CGContextFillRect(bitmapContext, CGRectMake(0, 0, targetWidth, targetHeight));
-  CGContextTranslateCTM(bitmapContext, 0, targetHeight);
-  CGContextScaleCTM(bitmapContext, 1, -1);
   CGContextDrawImage(
       bitmapContext, CGRectMake(0, 0, targetWidth, targetHeight), scaled.CGImage);
   CGContextRelease(bitmapContext);
 
+  NSData *grayscalePixels =
+      [NSData dataWithBytesNoCopy:grayscale length:pixelCount freeWhenDone:YES];
+  return [self dataFromGrayscalePixels:grayscalePixels
+                                 width:targetWidth
+                                height:targetHeight
+                             threshold:threshold
+                             feedLines:feedLines
+                                   cut:cut];
+}
+
++ (NSData *)dataFromGrayscalePixels:(NSData *)pixels
+                               width:(NSInteger)width
+                              height:(NSInteger)height
+                           threshold:(NSInteger)threshold
+                           feedLines:(NSInteger)feedLines
+                                 cut:(BOOL)cut
+{
+  const uint8_t *grayscale = static_cast<const uint8_t *>(pixels.bytes);
   NSMutableData *result = [NSMutableData data];
   [result appendData:[RNEscPosCommands initializePrinter]];
   [result appendData:[RNEscPosCommands setLineSpacing24]];
-  for (NSInteger stripeTop = 0; stripeTop < targetHeight; stripeTop += 24) {
-    [result appendData:[RNEscPosCommands bitImageHeaderForWidth:targetWidth]];
-    for (NSInteger x = 0; x < targetWidth; x += 1) {
+  for (NSInteger stripeTop = 0; stripeTop < height; stripeTop += 24) {
+    [result appendData:[RNEscPosCommands bitImageHeaderForWidth:width]];
+    for (NSInteger x = 0; x < width; x += 1) {
       for (NSInteger byteIndex = 0; byteIndex < 3; byteIndex += 1) {
         uint8_t imageByte = 0;
         for (NSInteger bit = 0; bit < 8; bit += 1) {
           NSInteger y = stripeTop + byteIndex * 8 + bit;
-          if (y < targetHeight && grayscale[(size_t)y * targetWidth + x] < threshold) {
+          if (y < height && grayscale[(size_t)y * width + x] < threshold) {
             imageByte |= (uint8_t)(1 << (7 - bit));
           }
         }
@@ -140,7 +168,6 @@ static const NSInteger RNMaxImageHeight = 30000;
     const uint8_t lineFeed = '\n';
     [result appendBytes:&lineFeed length:1];
   }
-  free(grayscale);
   [result appendData:[RNEscPosCommands finishWithFeedLines:feedLines cut:cut]];
   return result;
 }

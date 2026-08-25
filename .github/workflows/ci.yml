@@ -147,3 +147,22 @@ jobs:
             -destination 'generic/platform=iOS Simulator' \
             CODE_SIGNING_ALLOWED=NO \
             build
+
+      - name: Test iOS image encoder
+        run: |
+          simulator_id="$(
+            xcrun simctl list devices available --json | ruby -rjson -e '
+              devices = JSON.parse($stdin.read).fetch("devices").values.flatten
+              iphone = devices.find { |device| device.fetch("name").start_with?("iPhone") }
+              puts iphone.fetch("udid")
+            '
+          )"
+          xcodebuild \
+            -workspace example/ios/RnEscposPrinterExample.xcworkspace \
+            -scheme RnEscposPrinterExample \
+            -configuration Debug \
+            -sdk iphonesimulator \
+            -destination "platform=iOS Simulator,id=${simulator_id}" \
+            -only-testing:RnEscposPrinterExampleTests/RNEscPosImageEncoderTests \
+            CODE_SIGNING_ALLOWED=NO \
+            test
